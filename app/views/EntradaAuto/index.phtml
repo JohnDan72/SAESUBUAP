@@ -1,0 +1,128 @@
+ <?php echo $this->getContent(); 
+	  echo \Phalcon\Tag::stylesheetLink("css/estilosEntAuto.css");
+?>
+
+<?php if(isset($ErrorLogin)) {?>
+	<div class="container">
+		<div class="row" id="error">
+			<h1 align="center" style="color: red;">
+				<?php echo $ErrorLogin;?>
+			</h4>
+		</div>
+	</div>
+<?php
+	}
+	else{
+?>
+
+<div class="container">
+	
+	<div class="row" id="titulo2">
+		<h4 align="center">
+			Entrada / Salida <?php echo ($this->session->get('userdata'))? $this->session->get('userdata')['Nombre_A']:"";?>
+		</h4>
+
+		<h5 align="center">Pasa tu credencial por el lector</h5>
+	</div>
+	
+	<div class="row">
+		<div class="col s2 offset-s5">
+			
+			<div class="input-field" id="matriculaEntAuto">
+				<?php echo $this->tag->textField([
+												'Matricula_Ent',
+												'onkeypress'=> "return checar2(event)",
+												'class' => 'validate',
+	      										'data-length'=>"9"
+												]);?>
+				<label for="Matricula_Ent">Matricula</label>
+			</div>
+			
+		</div>
+	</div>
+
+	<div class="row" id="id_Resultado" style="display: none;">
+			<div class="col s12 m6 offset-m3 center">
+				<h4 id="text_Result">...</h4>
+			</div>
+			<div class="col s12 m6 offset-m3 center">
+				<img id="img_Result"  style="height: 330px; width: 330px;">
+			</div>
+	</div>
+</div>
+
+<?php 
+	}
+?>
+<script type="text/javascript">
+	
+	
+ 
+	function checar2(e) {
+	    tecla = (document.all) ? e.keyCode : e.which;
+	    
+	    if (tecla == 13) {
+	    	var tamanio = document.getElementById("Matricula_Ent").value.length;
+		    if (tamanio == 9){
+		    	var id_P = document.getElementById("Matricula_Ent").value;
+		    	var tamInput = document.getElementById("Matricula_Ent").value.length;
+		    	
+	                 $.ajax({
+	                    url: "<?php echo $this->url->get("EntradaAuto/ajaxRegistro")?>",
+	                    type:'GET',
+	                    dataType: 'json',
+	                    data: {id_person: id_P, tam: tamInput}
+
+	                }).done(function (data) {
+	                	
+	                	if (data != "Error") {
+	                		document.getElementById('text_Result').innerHTML = data;
+	                		document.getElementById('img_Result').src = 'https://cdn.pixabay.com/photo/2016/01/20/18/59/confirmation-1152155_960_720.png';
+	                		document.getElementById('id_Resultado').style.display = 'block';
+	                	}
+	                	else{
+	                		document.getElementById('text_Result').innerHTML = "Acceso Denegado";
+	                		document.getElementById('img_Result').src = 'https://pngimage.net/wp-content/uploads/2018/06/incorrecto-icono-png-4.png';
+	                		document.getElementById('id_Resultado').style.display = 'block';
+	                	}
+	                	
+	                	
+						});
+
+		        limpiar();
+		        var aux = setTimeout(function(){ 
+		        			document.getElementById('text_Result').innerHTML = "";
+		        			document.getElementById('id_Resultado').style.display = 'none';
+		    				}, 2000);
+		    }
+		    else{
+		    	document.getElementById('text_Result').innerHTML = "Acceso Denegado";
+		    	document.getElementById('img_Result').src = 'https://pngimage.net/wp-content/uploads/2018/06/incorrecto-icono-png-4.png';
+	            document.getElementById('id_Resultado').style.display = 'block';
+	            limpiar();
+		        var aux = setTimeout(function(){ 
+		        			document.getElementById('text_Result').innerHTML = "";
+		        			document.getElementById('id_Resultado').style.display = 'none';
+		    				}, 2000);
+
+		    }
+	    }
+
+	    patron = /[0-9]/;
+	    tecla_final = String.fromCharCode(tecla);
+	    return patron.test(tecla_final);
+	}
+
+	function limpiar(){
+		document.getElementById("Matricula_Ent").value = "";
+		document.getElementById("Matricula_Ent").focus();
+	}
+
+	$(document).ready(function(){
+		
+		$('#Matricula_Ent').focus();
+	});
+
+	
+</script>
+

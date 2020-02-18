@@ -1,0 +1,521 @@
+ <?php echo $this->getContent(); 
+	  echo \Phalcon\Tag::stylesheetLink("css/estilosGestion.css");
+	  //echo \Phalcon\Tag::javascriptInclude('js/nodejs_1.js');
+	//echo Phalcon\Tag::javascriptInclude("http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js", false);
+?>
+
+<div class="slider">
+	    <ul class="slides">
+	      <li>
+	        <img src="http://arquitecturapanamericana.com/wp-content/uploads/2016/06/Fachada-Principal.jpg"> <!-- link para imagen en el nav -->
+	        	<div class="caption center-align">
+		          <h2>SAESU-BUAP</h2>
+		          <h4 class="light grey-text text-lighten-2">La aplicación para el control del personal universitario.</h4>
+		        </div>
+	      </li>
+	      <li>
+	        <img src="http://enlacenoticias.com.mx/media/k2/items/cache/d2a7772c4087cb1d23402879729bb1df_XL.jpg"> <!-- random image -->
+	        <div class="caption left-align">
+	          <h2>Mayor seguridad</h2>
+	          <h4 class="light grey-text text-lighten-3">Para estudiantes, docentes y todo el personal dentro de las instalaciones de CU.</h4>
+	        </div>
+	      </li>
+	      <li>
+	        <img src="https://pbs.twimg.com/media/DmWb7mVUcAA5Tdk.jpg"> <!-- random image -->
+	        <div class="caption right-align">
+	          <h2>Solo pasa tu credencial</h2>
+	          <h4 class="light grey-text text-lighten-3">Nosotros nos encargamos del resto.</h4>
+	        </div>
+	      </li>
+	      <li>
+	        <img src="http://radiobuap.com/wp-content/uploads/2016/04/Artes-VEM-7-1024x683.jpg"> <!-- random image -->
+	        <div class="caption center-align">
+	          <h2>Bicis</h2>
+	          <h4 class="light grey-text text-lighten-3">Ahora más facil de registrarse.</h4>
+	        </div>
+	      </li>
+	    </ul>
+	  </div>
+
+<div class="container">
+		
+	<div class="col s12 m12" >
+		<h3 align="center">
+			Registro Manual <?php echo " (".$this->session->get('userdata')['Nombre_A'].")";?>
+		</h3>
+	</div>
+
+
+	<div class="row">
+      <div class="col s12" id="form_1" align="center" style="margin-top: 50px;">
+
+		<ul id="tabs-swipe-demo" class="tabs">
+		    <li class="tab col s6 m3 offset-m3"><a class="active" href="#test-swipe-1">PERSONA / BICI</a></li>
+		    <li class="tab col s6 m3"><a class="" href="#test-swipe-2">INVITADOS</a></li>
+	    </ul>
+	    <br><br>
+	    <div id="test-swipe-1" class="col s12">
+	    	<?php echo $this->tag->form("gestion/cambioDentro");?>
+      		<div class="col s12 m12">
+      			<h4 class="grey-text text-darken-2">
+      				 Personal BUAP 
+      			</h4>
+      			<h5 class="blue-text text-darken-4"><?php echo (isset($Reg_Result))? $Reg_Result:""; ?></h5>
+      		</div>
+      		<div class="col s12 m12">
+      			<p class="grey-text text-darken-1">
+      				 Llene los campos correspondientes para realizar la búsqueda (llenar campo para bici solo si es necesario).
+      			</p>
+      		</div>
+      		<br><br><br><br><br>
+      		<div class="row">
+      			<div class="col s12 m6 offset-m3 input-field">
+
+	      			<?php echo $this->tag->textField([
+	      											'Matricula',
+	      											'onkeypress' => 'return checar(event)',
+	      											'type'      =>  'text',
+	      											'class' => 'validate',
+	      											 'data-length'=>"9",
+	      											 'value' => (isset($Reg_Result))? "":$this->request->getPost('Matricula')
+	      											]);?>
+	      			<label for="Matricula">Matricula</label>
+
+					
+	      		</div>
+	      		<div class="col s12 m6 offset-m3 input-field">
+
+	      			<?php echo $this->tag->textField([
+	      											'Id_Bici',
+	      											'onkeypress' => 'return checar(event)',
+	      											'type'      =>  'text',
+	      											'class' => 'validate',
+	      											 'data-length'=>"9",
+	      											 'value' => (isset($Reg_Result))? "":$this->request->getPost('Id_Bici')
+	      											]);?>
+	      			<label for="Id_Bici">Identificador de Bici</label>
+
+
+	      			<?php echo $this->tag->textField([
+	      											'Id_Dentro',
+	      											'value'      =>  '',
+	      											'style'     => 'display:none'
+	      											]);?>
+
+					
+	      		</div>
+      		</div>
+      		
+      		<br>
+      		<div class="row">
+
+				    <!-- Modal Trigger -->
+					  <button id="boton_ajax" name="buttonBuscar" data-target="modal1" class="col s6 offset-s3 m4 offset-m4 waves-effect waves-light btn modal-trigger blue darken-4">Buscar</button>
+					  
+					  <!-- Modal Structure -->
+					  <div id="modal1" class="modal modal-fixed-footer">
+					    <div class="modal-content">
+					    	<div class="row">
+					    		<div class="col s12 ">
+					    			<h4 id="label_header" align="center">Resultado de consulta</h4>
+				      				<div class="divider"></div>
+					    		</div>
+					    		
+					    	</div>
+					      
+					      <!--Información del usuario: -->
+					      <div class="row">
+					      	<div class="col s12 m6 offset-m3">
+					      		<img src="https://cdn3.iconfinder.com/data/icons/medcare/512/patient_info-512.png" style="height: 50px; width: 50px;">
+
+					      	</div>
+					      </div>
+					      
+					      <div class="row">
+					      	<div class="col s12 m5">
+					      		<img id="img_user_modal" src="https://www.stickpng.com/assets/images/585e4beacb11b227491c3399.png" style="height: 260px; width: 260px;">
+					      	</div>
+
+
+					      	<div class="col s12 m7 " style=" text-align: left;">
+						      	<div class="row">
+						      		<div class="col 12s m12" id="row_header_user">
+						      			<h5 id="label_header_user" align="center">Información Personal</h5>
+			      						<div class="divider"></div>
+						      		</div>
+						      		<div class="col s12 m3 offset-m2">
+					      			<h5 id="label_mat">Matrícula: </h5>
+						      		</div>
+						      		<div class="col s12 m6">
+						      			<h5 align="center" id="matricula_ajax">...</h5>
+						      		</div>
+						      	
+
+						      	
+						      		<div class="col s12 m3 offset-m2">
+						      			<h5 id="label_nom">Nombre: </h5>
+						      		</div>
+						      		<div class="col s12 m6">
+						      			<h5 align="center" id="nombre_ajax">...</h5>
+						      		</div>
+						      		
+						      	
+						      	
+						      	
+						      		<div class="col s12 m3 offset-m2">
+						      			<h5 id="label_facu">Facultad: </h5>
+						      		</div>
+						      		<div class="col s12 m6">
+						      			<h5 align="center" id="facu_ajax">...</h5>
+						      		</div>
+						      	</div>
+						      	
+
+								<div class="row" id="id_row_Bici" >
+									<div class="col s12" id="label_header_bici">
+										
+										<h5 align="center">Información Bici</h5>
+										<div class="divider"></div>
+									</div>
+									
+									<div class="col s12 m3 offset-m2">
+										<h5 id="label_idBici">Id Bici: </h5>
+									</div>
+									<div class="col s12 m6">
+										<h5 align="center" id="idBici_ajax">...</h5>
+									</div>
+
+
+									<div class="col s12 m3 offset-m2">
+										<h5 id="label_color">Color: </h5>
+									</div>
+									<div class="col s12 m6">
+										<h5 align="center" id="color_ajax">...</h5>
+									</div>
+								  	
+
+									<div class="col s12 m3 offset-m2">
+										<h5 id="label_marca">Marca: </h5>
+									</div>
+									<div class="col s12 m6">
+										<h5 align="center" id="marca_ajax">...</h5>
+									</div>
+
+
+									<div class="col s12 m3 offset-m2">
+										<h5 id="label_rodada">Rodada: </h5>
+									</div>
+									<div class="col s12 m6">
+										<h5 align="center" id="rodada_ajax">...</h5>
+									</div>
+								</div>
+						      		
+						      	
+						    </div>
+					      </div>
+
+					      
+						      	
+						    
+					      
+					    </div>
+					    <div class="modal-footer">
+					    	<div class="col s6 offset-s3 m4 offset-m1" align="center">
+
+								<a href="#!" class="modal-close waves-effect waves-light btn-flat" style=" color: #ffffff; background-color: #d32f2f">Cancelar</a>
+								
+					    	</div>
+					    	<div class="col s6 offset-s3 m4 offset-m2" align="center">
+					    		<button id="btn_EntSal" class="btn waves-effect waves-light" type="submit" name="action">Enviar
+								   <i class="material-icons right">send</i>
+								</button>
+					    		
+					    	</div>
+					    </div>
+					  </div>
+
+      		</div>
+      		<?php
+		      if (isset($form_error)) {
+		        ?>
+			        <span class="helper-text" style="color:red;">
+			          <?php echo $form_error; ?>
+			        </span>
+		      <?php
+		    	}
+		      ?>
+
+		 <?php echo $this->tag->endForm(); ?>
+	    </div>
+	    
+
+
+
+
+
+
+		<!--Invitados-->
+	    <div id="test-swipe-2" class="col s12">
+		    	<div class="col s12 m12 l12 center-align">
+	      			<h4 class="grey-text text-darken-2">
+	      				Registro de Invitados
+	      			</h4>
+	      		</div>
+	      		<div class="col s12 m12 center-align">
+	      			<p class="grey-text text-darken-1">
+	      				 Llene los campos correspondientes para realizar un nuevo registro (llenar campo para bici solo si es necesario).
+	      			</p>
+	      		</div>
+	      		 <div class="row">
+				    <div class="input-field col s12 m9 l6 offset-m2 offset-l3">
+				      <input id="NuevoNombre" type="text" class="validate">
+				      <label class="active" for="NuevoNombre">Nombre</label>
+				    </div>
+				</div>
+				<div class="row">
+					<div class="input-field col s6 m3 offset-m2 offset-l3">
+				      <input id="NuevoAp_Paertno" type="text" class="validate">
+				      <label class="active" for="NuevoAp_Paertno">Apellido Paterno</label>
+				    </div>
+				    <div class="input-field col s6 m3 ">
+				      <input id="NuevoAp_Materno" type="text" class="validate">
+				      <label class="active" for="NuevoAp_Materno">Apellido Materno</label>
+				    </div>
+				</div>
+				<div class="row">
+					<div class="input-field col s12 m9 l6 offset-m2 offset-l3">
+				      <input id="Correo" type="text" class="validate">
+				      <label class="active" for="Correo">Correo</label>
+				    </div>
+				</div>
+				<div class="row">
+					<div class="input-field col s12 m9 l6 offset-m2 offset-l3">
+				      <input id="Celular" type="text" class="validate">
+				      <label class="active" for="Celular">Celular</label>
+				    </div>
+				</div>
+				<div class="row">
+					<div class="input-field col s12 m9 l6 offset-m2 offset-l3">
+				      <input id="ID_Persona" type="text" class="validate">
+				      <label class="active" for="ID_Persona">ID Persona</label>
+				    </div>
+				</div>
+				<div class="row">
+					<div class="col s12 m9 l6 offset-m2 offset-l3">
+						<a href="#!" id="Bici_boton_ajax" name="Bici_buttonBuscar" data-target="Bici_modal1" class="col s3 m3 l3  modal-trigger waves-effect waves-light btn BicicletaInvitado"></a>
+						<a href="#!" class="col s9 m6 l5  offset-m3 offset-l4 modal-close waves-effect waves-light btn blue darken-4 ">
+							<i class="material-icons right">send</i>
+							Registrar
+						</a>	
+						
+					</div>
+				</div>
+				<div id="Bici_modal1" class="modal modal-fixed-footer">
+					    <div class="modal-content">
+					    	<div class="row">
+					    		<div class="col s12 center-align">
+					    			<h4 id="label_header ">Información Bicicleta</h4>
+				      				<div class="divider"></div>
+					    		</div>
+					    	</div>
+					      	<!--Campos Bici -->
+					      	<div class="row">
+					      		<div class="input-field col s6 m3 l6 offset-m2 offset-l3">
+							      <input type="text" class="validate">
+							      <label class="active" for="ID_BICI">ID Bici</label>
+							    </div>
+							    <div class="input-field col s6 m3 l6 offset-m2 offset-l3">
+							      <input type="text" class="validate">
+							      <label class="active" for="Color_BICI">Color</label>
+							    </div>
+							    <div class="input-field col s6 m3 l6 offset-m2 offset-l3">
+							      <input type="text" class="validate">
+							      <label class="active" for="Marca_BICI">Marca</label>
+							    </div>
+							    <div class="input-field col s6 m3 l6 offset-m2 offset-l3">
+							      <input type="text" class="validate">
+							      <label class="active" for="Rodada_BICI">Rodada</label>
+							    </div>
+					      	</div>
+
+						</div>
+					    <div class="modal-footer">
+					    	<div class="col s6 m4 offset-m1 center-align">
+					    		<a href="#!" class="modal-close waves-effect waves-light btn-flat"  id="BotonCancelar">Cancelar</a>
+					    	</div>
+					    	<div class="col s6  m4 offset-m2 center-align">
+								<button id="btn_EntSal" class="btn waves-effect waves-light" type="submit" name="action">Registrar
+								   <i class="material-icons right">send</i>
+								</button>
+					    	</div>
+					    	
+					    </div>
+					</div>
+		    </div>
+		
+      </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="js/materialize.min.js"></script>
+<script type="text/javascript">
+  M.AutoInit();
+
+  $(document).ready(function() {
+    $('input#Matricula').characterCounter();
+  });
+
+	$(document).ready(function(){
+	    $('.slider').slider();
+  	});
+
+  	$(document).ready(function(){
+	    $('.tabs').tabs();
+	  });
+			
+
+
+  	$(document).ready(function(){
+		var scrollValue = 450;
+		$('html, body').animate({scrollTop : scrollValue},700);
+	});
+
+
+
+  	
+
+</script>
+
+
+<script type="text/javascript">
+
+        $(document).ready(function(){
+            $("#boton_ajax").click(function(){
+            	var id_P = document.getElementById("Matricula").value;
+            	var id_B = document.getElementById("Id_Bici").value;
+                 $.ajax({
+                    url: "<?php echo $this->url->get("Gestion/ajaxEstudianteBici")?>",
+                    type:'GET',
+                    dataType: 'json',
+                    data: {id_person: id_P, id_bici: id_B}
+
+                }).done(function (data) {
+                	
+                	if(data != "Error")
+                	{	
+                		document.getElementById("label_header").innerHTML = "Resultado de Consulta";
+		                document.getElementById('label_header').style.color = '#000000';
+		                document.getElementById("row_header_user").style.display = "block";
+                		document.getElementById("img_user_modal").style.display = 'block';
+                		document.getElementById("Id_Dentro").value = data.Dentro;
+                		document.getElementById("btn_EntSal").style.display = 'block';
+                		if (data.Dentro == '0') {
+                			document.getElementById("btn_EntSal").innerHTML = 'Dar Entrada';
+                			document.getElementById("btn_EntSal").style.backgroundColor = '#1976d2';
+                		}
+                		else{
+                			document.getElementById("btn_EntSal").innerHTML = 'Dar Salida';
+                			document.getElementById("btn_EntSal").style.backgroundColor = '#ffa000';
+                		}
+
+                		if (data.Return_Type == 1) {
+                			switch(data.Tipo_P){
+		                		case '1':
+		                		  document.getElementById("label_header_user").innerHTML = "Información Estudiante";
+		                		  document.getElementById('label_header_user').style.color = '#000000';
+		                		  document.getElementById("label_mat").innerHTML = "Matrícula:";
+								  document.getElementById("label_nom").innerHTML = "Nombre:";
+								  document.getElementById("label_facu").innerHTML = "Facultad:";
+		                		  document.getElementById("matricula_ajax").innerHTML = data.Id_Persona;
+								  document.getElementById("nombre_ajax").innerHTML = data.Nombre+" "+data.Ap_Paterno+" "+data.Ap_Materno;
+								  document.getElementById("facu_ajax").innerHTML = data.Facultad;
+
+								  document.getElementById("id_row_Bici").style.display = 'none';
+		                		break;
+		                		case '2':
+			            		  document.getElementById("label_header_user").innerHTML = "Información Docente";
+			            		  document.getElementById('label_header_user').style.color = '#000000';
+		                		  document.getElementById("label_mat").innerHTML = "Id :";
+								  document.getElementById("label_nom").innerHTML = "Nombre:";
+								  document.getElementById("label_facu").innerHTML = "Grado:";
+			            		  document.getElementById("matricula_ajax").innerHTML = data.Id_Persona;
+								  document.getElementById("nombre_ajax").innerHTML = data.Nombre+" "+data.Ap_Paterno+" "+data.Ap_Materno;
+								  document.getElementById("facu_ajax").innerHTML = data.Grado_Estudios;
+
+								  document.getElementById("id_row_Bici").style.display = 'none';
+		                		break;
+		                	}
+                		}
+                		else if (data.Return_Type == 2) {
+                			
+                			switch(data.Tipo_P){
+		                		case '1':
+		                		  document.getElementById("label_header_user").innerHTML = "Información Estudiante";
+		                		  document.getElementById('label_header_user').style.color = '#000000';
+		                		  document.getElementById("label_mat").innerHTML = "Matrícula:";
+								  document.getElementById("label_nom").innerHTML = "Nombre:";
+								  document.getElementById("label_facu").innerHTML = "Facultad:";
+		                		  document.getElementById("matricula_ajax").innerHTML = data.Id_Persona;
+								  document.getElementById("nombre_ajax").innerHTML = data.Nombre+" "+data.Ap_Paterno+" "+data.Ap_Materno;
+								  document.getElementById("facu_ajax").innerHTML = data.Facultad;
+								  document.getElementById("idBici_ajax").innerHTML = data.Id_Bici;
+								  document.getElementById("color_ajax").innerHTML = data.Color;
+								  document.getElementById("marca_ajax").innerHTML = data.Marca;
+								  document.getElementById("rodada_ajax").innerHTML = data.Rodada;
+
+								  document.getElementById("id_row_Bici").style.display = 'block';
+
+		                		break;
+		                		case '2':
+			            		  document.getElementById("label_header_user").innerHTML = "Información Docente";
+			            		  document.getElementById('label_header_user').style.color = '#000000';
+		                		  document.getElementById("label_mat").innerHTML = "Id :";
+								  document.getElementById("label_nom").innerHTML = "Nombre:";
+								  document.getElementById("label_facu").innerHTML = "Grado:";
+			            		  document.getElementById("matricula_ajax").innerHTML = data.Id_Persona;
+								  document.getElementById("nombre_ajax").innerHTML = data.Nombre+" "+data.Ap_Paterno+" "+data.Ap_Materno;
+								  document.getElementById("facu_ajax").innerHTML = data.Grado_Estudios;
+								  document.getElementById("idBici_ajax").innerHTML = data.Id_Bici;
+								  document.getElementById("color_ajax").innerHTML = data.Color;
+								  document.getElementById("marca_ajax").innerHTML = data.Marca;
+								  document.getElementById("rodada_ajax").innerHTML = data.Rodada;
+
+								  document.getElementById("id_row_Bici").style.display = 'block';
+
+		                		break;
+		                	}
+                		}
+                		
+	                	
+                	}
+                	else{
+                	  
+            		  document.getElementById("matricula_ajax").innerHTML = "";
+					  document.getElementById("nombre_ajax").innerHTML = "";
+					  document.getElementById("facu_ajax").innerHTML = "";
+					  document.getElementById("label_mat").innerHTML = "";
+					  document.getElementById("label_nom").innerHTML = "";
+					  document.getElementById("label_facu").innerHTML = "";
+					  document.getElementById("label_header").innerHTML = "ERROR EN CONSULTA";
+					  document.getElementById('label_header').style.color = '#d32f2f';
+
+					  document.getElementById("id_row_Bici").style.display = 'none';
+					  document.getElementById("btn_EntSal").style.display = 'none';
+					  document.getElementById("img_user_modal").style.display = 'none';
+					  document.getElementById("row_header_user").style.display = "none";
+                	}
+                	
+					});     
+            });
+        });
+    </script>
+
+
+

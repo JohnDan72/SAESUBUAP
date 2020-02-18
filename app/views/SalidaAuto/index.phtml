@@ -1,0 +1,40 @@
+<?php echo $this->getContent(); 
+	  echo \Phalcon\Tag::stylesheetLink("css/estilosSalAuto.css");
+?>
+
+<div class="container">
+	<div class="row" id="titulo1">
+		<h4 align="center">
+			Sistema Automático de Entrada y Salida Universitario (vista lector de código de barras)
+		</h4>
+	</div>
+	<div class="row" id="titulo2">
+		<h4 align="center">
+			Salida
+		</h4>
+	</div>
+
+	<div class="row">
+		<div class="col s12 m4 offset-m4">
+			<?php echo $this->tag->form('EntradaAuto/valida');//apertura de form entAuto?>
+			<div class="input-field" id="matriculaEntAuto">
+				<?php echo $this->tag->textField([
+												'Matricula_Sal',
+												'onkeypress'=> "return checar(event)",
+												'class' => 'validate',
+	      										'data-length'=>"10"
+												]);?>
+				<label for="Matricula_Sal">Matricula</label>
+			</div>
+			<?php echo $this->tag->endForm();//cierre de form entAuto?>
+		</div>
+	</div>
+
+	<div class="row" id="boton_SalAuto">
+			<?php echo $this->tag->submitButton([
+				"type" => "submit",
+			    "value" => "Envío",
+			    "class" => " col s12 m2 offset-m5 btn waves-input-wrapper waves-light green accent-4 ",
+			]);?>
+	</div>
+</div>
