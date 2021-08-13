@@ -18,8 +18,10 @@ class EntradaAutoController extends ControllerBase{
 			try {
 			    $datAux = explode(" ", $data);//split("[/.-]", $data);
 				if (count($datAux)==2) {
+
 					$datLogin['id_user'] = $datAux[0];
 					$datLogin['passw'] = $datAux[1];
+					//echo "dataLogin: <br>".$datLogin['id_user']."<br>".$datLogin['passw']."<br>";
 					if(!$this->login($datLogin)){
 						$this->view->ErrorLogin = "ACCESO DENEGADO";
 					}
@@ -138,3 +140,8 @@ class EntradaAutoController extends ControllerBase{
     }
 
 }
+
+/*
+Ejemplo de Entrada URL
+http://localhost/_Phalcon/SAESUBUAP/entradaauto/index/10001%20acceso123
+*/
